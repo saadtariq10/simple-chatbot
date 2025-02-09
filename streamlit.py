@@ -18,25 +18,33 @@ load_dotenv()
 # Fetch the API key from the .env file
 groq_api_key = os.getenv('GROQ_API_KEY')
 
+# Function to read system prompt from file
+def load_system_prompt(file_path="system_prompt.txt"):
+    try:
+        with open(file_path, "r", encoding="utf-8") as file:
+            return file.read().strip()
+    except FileNotFoundError:
+        return "You are a helpful AI assistant providing career guidance for startup job seekers."
+
 def main():
     """
     This function is the main entry point of the application. It sets up the Groq client, the Streamlit interface, and handles the chat interaction.
     """
 
     # Display logo and subtitle
-    st.image("jumpstart-logo-black.svg", width=350)  # Adjust width as needed
+    st.image("knvb-logo-vector-2022.svg", width=350)  # Adjust width as needed
     st.markdown(
         """
         <div style="display: flex; align-items: center;">
             <div style="margin-left: 4px;">
-                <h3>The startup career accelerator. Founders pitch their jobs to you. Land a high-growth startup role. Accelerate your startup career.</h3>
+                <h2>KNVB Parent Portal</h2>
+                <h3>helping parents navigate agents, clubs and their children as they continue their journey to professional footballer</h3>
             </div>
         </div>
         """,
         unsafe_allow_html=True
     )
     
-   
     # Initialize chat history
     if "chat_history" not in st.session_state:
         st.session_state.chat_history = []
@@ -46,20 +54,10 @@ def main():
         with st.chat_message(message["role"]):
             st.markdown(message["content"])
 
-    # Define system prompt
-    system_prompt = """
-        You are an AI-based interviewer designed to provide a concise and structured interview experience. 
-        
-        Focus on both technical knowledge and soft skills, but ensure your responses are brief and to the point.
+    # Load system prompt from file
+    system_prompt = load_system_prompt()
 
-        Do not provide lengthy explanations or unnecessary information.
-
-        After the final question, provide a short assessment of the user’s performance, highlighting strengths and areas for improvement. Offer specific, constructive feedback and suggest resources for further practice in a summarized manner. Conclude with a short, motivational message, encouraging the user to continue improving.
-
-        Throughout the process, keep your responses clear, concise, and focused on the next step.
-        """
-
-    model = 'llama3-8b-8192'
+    model = 'llama-3.3-70b-versatile'
     conversational_memory_length = 5
 
     memory = ConversationBufferWindowMemory(k=conversational_memory_length, memory_key="chat_history", return_messages=True)
@@ -71,7 +69,7 @@ def main():
     )
 
     # Accept user input
-    prompt = st.chat_input("🚀 Ask me anything about startup careers...")
+    prompt = st.chat_input("🚀 Ask me anything about your child’s development...")
 
     if prompt:
         # Add user message to chat history
@@ -110,18 +108,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
